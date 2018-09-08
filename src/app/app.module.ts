@@ -11,13 +11,16 @@ import { appRoutes } from './app-routing.module';
 import { ParseService } from './shared/services/parse.service';
 import { AuthService } from './shared/services/auth.service';
 import { AuthGuard } from './shared/services/auth-guard.service';
+import { ChatComponent } from './chat/chat.component';
+import { ChatService } from './shared/services/chat.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     RegisterComponent,
-    LoginComponent
+    LoginComponent,
+    ChatComponent
   ],
   imports: [
     BrowserModule,
@@ -25,7 +28,7 @@ import { AuthGuard } from './shared/services/auth-guard.service';
     ReactiveFormsModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [ParseService, AuthService, AuthGuard],
+  providers: [ParseService, AuthService, AuthGuard, ChatService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

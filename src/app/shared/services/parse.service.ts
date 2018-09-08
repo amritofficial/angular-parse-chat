@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, observable } from 'rxjs';
 
 const Parse = require('parse');
 
@@ -22,19 +22,35 @@ export class ParseService {
     return this.postsQuery.subscribe();
   }
 
-  public login(email: string, password: string): Observable<boolean> {
-    return new Observable(observer => {
-      Parse.User.logIn(email, password, {
-        success: function (user) {
-          console.log('Logged')
-          observer.next(true);
-          observer.complete();
-        },
-        error: function (user, error) {
-          observer.error(error)
-        }
-      });
+  public login(email: string, password: string):Observable<any>{
+    return new Observable(data => {
+      Parse.User.logIn(email, password).then(() => data.next(true))
     })
+    // return new Observable(observer => {
+    //   Parse.User.logIn(email, password, {
+    //     success: () => {
+    //       console.log("Sucess");
+    //       observer.next(true);
+    //     },
+    //     error: (error) => {
+    //       observer.error(error);
+    //     }
+    //   })
+    // })
+    // return new Observable(observer => {
+    //   Parse.User.logIn(email, password, {
+    //     success: function (user) {
+    //       console.log('Logged')
+    //       observer.next(true);
+    //       observer.complete();
+    //     },
+    //     error: function (user, error) {
+    //       observer.error(error)
+    //     }
+    //   }
+    //   );
+    //   console.log(observer);
+    // })
   }
 
 
@@ -74,5 +90,27 @@ export class ParseService {
   public getCurrentSession() {
     // console.log(Parse.session.token)
     return Parse.Session.current();
+  }
+
+  public sendMessage(message: string): Observable<boolean> {
+    var Posts = Parse.Object.extend("Posts");
+    var posts = new Posts();
+
+    posts.set("message", message);
+    posts.set("user", Parse.User.current());
+    posts.set("from", Parse.User.current().get('username'));
+
+    return new Observable(observer => {
+      posts.save(null, {
+        success: (result) => {
+          console.log("SAVED MESSAGE")
+          observer.next(true)
+          observer.complete();
+        },
+        error: (error) => {
+          observer.error(error);
+        }
+      })
+    })
   }
 }
